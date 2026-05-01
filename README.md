@@ -29,21 +29,4 @@ This Java-based Stock Management Software is designed to efficiently manage inve
 2. Log in using your credentials.
 3. Start managing your stock by adding products, suppliers, and monitoring inventory levels.
 
-## Contributing
-We welcome contributions to enhance the software. Please follow the guidelines below:
-- Fork the repository.
-- Create a feature branch.
-- Make your changes and commit them.
-- Push to the branch and submit a pull request.
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-For any inquiries, please contact:
-- **Email**: your-email@example.com
-- **GitHub**: [Laeticia18](https://github.com/Laeticia18)
-
-## Acknowledgments
-- Special thanks to all contributors.
-- This software was inspired by the need for better stock management solutions.
