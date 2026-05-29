@@ -1,15 +1,18 @@
 package Controller;
+
 import Model.Article;
-import Model.ArticleDAO;
-import View.ArticleView;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import view.ArticleView;
+import view.FournisseurView;
+import DAO.ArticleDAO;
+import DAO.FournisseurDAO;
 
 public class ArticleController {
     private ArticleView view;
     private ArticleDAO articleDAO;
-    private Controller.FournisseurController fournisseurController;
+    private FournisseurController fournisseurController;
 
     public ArticleController(ArticleView view, ArticleDAO articleDAO) {
         this.view = view;
@@ -30,7 +33,7 @@ public class ArticleController {
         view.addFournisseurButtonListener(e -> ouvrirFournisseurView());
     }
 
-    public void setFournisseurController(Controller.FournisseurController fournisseurController) {
+    public void setFournisseurController(FournisseurController fournisseurController) {
         this.fournisseurController = fournisseurController;
     }
    
@@ -52,7 +55,7 @@ public class ArticleController {
             String quantiString = view.getQuantite();
             String idFournisseurString = view.getIdFournisseur();
 
-            double prix = Double.parseDouble(prixString);
+            double prix = Double.parseDouble(prixString.replace(',', '.'));
             int quantite = Integer.parseInt(quantiString);
             int idFournisseur = Integer.parseInt(idFournisseurString);
             
@@ -67,64 +70,75 @@ public class ArticleController {
     }
 
     public void supprimerArticleSelectionne() {
-        // Récupérer le nom de l'article sélectionné
-        String nomArticle = view.getSelectedArticleName();
+        // Récupérer l'ID de l'article sélectionné
+        int idArticle = view.getSelectedArticleId();
         
-        if (nomArticle == null) {
+        if (idArticle == -1) {
             view.afficherMessage("Veuillez sélectionner un article à supprimer !");
             return;
         }
         
         // Demander confirmation
-        if (view.confirmerSuppression(nomArticle)) {
-            articleDAO.supprimerArticle(nomArticle);
+        if (view.confirmerSuppression(view.getSelectedArticleName())) {
+            articleDAO.supprimerArticle(idArticle);
             afficherArticles();
             view.afficherMessage("Article supprimé avec succès !");
         }
     }
 
     public void modifierArticleSelectionne() {
-        // Récupérer l'article sélectionné (pour avoir le nom original)
-        Article articleSelectionne = view.getSelectedArticle();
-        
-        if (articleSelectionne == null) {
-            view.afficherMessage("Veuillez sélectionner un article à modifier !");
-            return;
-        }
-        
-        try {
-            // Récupérer les nouvelles données depuis les champs de texte
-            String nouveauNom = view.getNom();
-            String nouveauType = view.gettype();
-            double nouveauPrix = Double.parseDouble(view.getPrix());
-            int nouvelleQuantite = Integer.parseInt(view.getQuantite());
-            int nouveauIdFournisseur = Integer.parseInt(view.getIdFournisseur());
-            
-            // Créer l'article avec les nouvelles données
-            Article articleModifie = new Article(nouveauNom, nouveauType, nouveauPrix, nouvelleQuantite, nouveauIdFournisseur);
-            
-            // Modifier l'article dans la base de données
-            articleDAO.modifierArticle(articleModifie);
-            
-            // Rafraîchir l'affichage et vider les champs
-            afficherArticles();
-            view.viderChamps();
-            view.afficherMessage("Article modifié avec succès !");
-            
-        } catch (NumberFormatException e) {
-            view.afficherMessage("Erreur : Veuillez entrer des valeurs valides pour le prix, la quantité et l'ID fournisseur !");
-        } catch (Exception e) {
-            view.afficherMessage("Erreur lors de la modification : " + e.getMessage());
-        }
+    Article articleSelectionne = view.getSelectedArticle();
+    
+    if (articleSelectionne == null) {
+        view.afficherMessage("Veuillez sélectionner un article à modifier !");
+        return;
     }
+    
+    try {
+        // Si le champ est vide, on garde l'ancienne valeur
+        String nouveauNom = view.getNom().trim().isEmpty() 
+            ? articleSelectionne.getNom() 
+            : view.getNom().trim();
+            
+        String nouveauType = view.gettype().trim().isEmpty() 
+            ? articleSelectionne.getType()
+            : view.gettype().trim();
+            
+        double nouveauPrix = view.getPrix().trim().isEmpty() 
+            ? articleSelectionne.getPrix_unitaire() 
+            : Double.parseDouble(view.getPrix().trim().replace(',', '.'));
+            
+        int nouvelleQuantite = view.getQuantite().trim().isEmpty() 
+            ? articleSelectionne.getQuantite_stock() 
+            : Integer.parseInt(view.getQuantite().trim());
+            
+        int nouveauIdFournisseur = view.getIdFournisseur().trim().isEmpty() 
+            ? articleSelectionne.getId_fournisseur() 
+            : Integer.parseInt(view.getIdFournisseur().trim());
+
+        int idArticle = articleSelectionne.getId_article();
+        
+        Article articleModifie = new Article(idArticle, nouveauNom, nouveauType, nouveauPrix, nouvelleQuantite, nouveauIdFournisseur);
+        
+        articleDAO.modifierArticle(articleModifie);
+        afficherArticles();
+        view.viderChamps();
+        view.afficherMessage("Article modifié avec succès !");
+        
+    } catch (NumberFormatException e) {
+        view.afficherMessage("Erreur : Veuillez entrer des valeurs valides pour le prix, la quantité et l'ID fournisseur !");
+    } catch (Exception e) {
+        view.afficherMessage("Erreur lors de la modification : " + e.getMessage());
+    }
+}
 
     private void ouvrirFournisseurView() {
         // Fermer la vue article
         view.dispose();
         
         // Créer et afficher la vue fournisseur
-        View.FournisseurView fournisseurView = new View.FournisseurView();
-        Model.FournisseurDAO fournisseurDAO = new Model.FournisseurDAO();
-        Controller.FournisseurController fournisseurController = new Controller.FournisseurController(fournisseurView, fournisseurDAO);
+       FournisseurView fournisseurView = new FournisseurView();
+        FournisseurDAO fournisseurDAO = new FournisseurDAO();
+        FournisseurController fournisseurController = new FournisseurController(fournisseurView, fournisseurDAO);
     }
 }

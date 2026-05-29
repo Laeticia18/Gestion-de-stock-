@@ -1,4 +1,5 @@
-package View;
+package view;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -119,7 +120,7 @@ public class ArticleView extends JFrame {
         
         // Table stylisée
         tableModel = new DefaultTableModel(
-            new String[] {"Nom", "Type", "Prix", "Quantite", "ID Fournisseur"}, 
+            new String[] {"ID", "Nom", "Type", "Prix", "Quantite", "ID Fournisseur"}, 
             0
         ) {
             @Override
@@ -130,11 +131,26 @@ public class ArticleView extends JFrame {
         
         table = new JTable(tableModel);
         styleTable();
+        hideIdColumn();
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getViewport().setBackground(Color.WHITE);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
+        
+        // Listener pour remplir les champs
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    nom.setText(tableModel.getValueAt(selectedRow, 1).toString());
+                    type.setText(tableModel.getValueAt(selectedRow, 2).toString());
+                    prix.setText(tableModel.getValueAt(selectedRow, 3).toString());
+                    quantite.setText(tableModel.getValueAt(selectedRow, 4).toString());
+                    idFournisseur.setText(tableModel.getValueAt(selectedRow, 5).toString());
+                }
+            }
+        });
         
         add(tablePanel);
         
@@ -224,23 +240,16 @@ public class ArticleView extends JFrame {
         // Cell renderer
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        for (int i = 2; i < table.getColumnCount(); i++) {
+        for (int i = 3; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
-        
-        // Listener pour remplir les champs
-        table.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    nom.setText(tableModel.getValueAt(selectedRow, 0).toString());
-                    type.setText(tableModel.getValueAt(selectedRow, 1).toString());
-                    prix.setText(tableModel.getValueAt(selectedRow, 2).toString());
-                    quantite.setText(tableModel.getValueAt(selectedRow, 3).toString());
-                    idFournisseur.setText(tableModel.getValueAt(selectedRow, 4).toString());
-                }
-            }
-        });
+    }
+
+    private void hideIdColumn() {
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setPreferredWidth(0);
+        table.getColumnModel().getColumn(0).setResizable(false);
     }
 
     public void addAjouterListener(ActionListener listener) {
@@ -259,6 +268,10 @@ public class ArticleView extends JFrame {
         fournisseurButton.addActionListener(listener);
     }
 
+    public int getSelectedArticleId() {
+        int selectedRow = table.getSelectedRow();
+        return selectedRow != -1 ? Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString()) : -1;
+    }
     public String getNom(){ return nom.getText(); }
     public String gettype(){ return type.getText(); }
     public String getPrix(){ return prix.getText(); }
@@ -267,18 +280,20 @@ public class ArticleView extends JFrame {
 
     public String getSelectedArticleName() {
         int selectedRow = table.getSelectedRow();
-        return selectedRow != -1 ? tableModel.getValueAt(selectedRow, 0).toString() : null;
+        return selectedRow != -1 ? tableModel.getValueAt(selectedRow, 1).toString() : null;
     }
 
     public Article getSelectedArticle() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
+            String prixValue = tableModel.getValueAt(selectedRow, 3).toString().replace(',', '.');
             return new Article(
-                tableModel.getValueAt(selectedRow, 0).toString(),
+                Integer.parseInt(tableModel.getValueAt(selectedRow, 0).toString()),
                 tableModel.getValueAt(selectedRow, 1).toString(),
-                Double.parseDouble(tableModel.getValueAt(selectedRow, 2).toString()),
-                Integer.parseInt(tableModel.getValueAt(selectedRow, 3).toString()),
-                Integer.parseInt(tableModel.getValueAt(selectedRow, 4).toString())
+                tableModel.getValueAt(selectedRow, 2).toString(),
+                Double.parseDouble(prixValue),
+                Integer.parseInt(tableModel.getValueAt(selectedRow, 4).toString()),
+                Integer.parseInt(tableModel.getValueAt(selectedRow, 5).toString())
             );
         }
         return null;
@@ -320,6 +335,7 @@ public class ArticleView extends JFrame {
         tableModel.setRowCount(0);
         for (Article article : articles) { 
             tableModel.addRow(new Object[] {
+                article.getId_article(),
                 article.getNom(), 
                 article.getType(), 
                 String.format("%.2f", article.getPrix_unitaire()),

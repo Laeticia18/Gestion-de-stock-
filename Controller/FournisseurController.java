@@ -1,11 +1,14 @@
 package Controller;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import View.FournisseurView;
-import View.ArticleView;
 import Model.Fournisseur;
-import Model.FournisseurDAO;
+import view.FournisseurView;
+import view.ArticleView;
+import DAO.FournisseurDAO;
+import DAO.ArticleDAO;
+
 
 public class FournisseurController {
     private FournisseurView view;
@@ -129,7 +132,7 @@ public class FournisseurController {
         
         // Créer et afficher la vue article
         articleView = new ArticleView();
-        Model.ArticleDAO articleDAO = new Model.ArticleDAO();
+        ArticleDAO articleDAO = new ArticleDAO();
         articleController = new ArticleController(articleView, articleDAO);
         
         // Ajouter un listener pour revenir à la vue fournisseur

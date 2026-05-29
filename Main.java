@@ -1,9 +1,9 @@
-import View.ArticleView;
-import View.FournisseurView;
-import Controller.ArticleController;
+import view.FournisseurView;
+import view.ArticleView;
+import DAO.FournisseurDAO;
+import DAO.ArticleDAO;
 import Controller.FournisseurController;
-import Model.ArticleDAO;
-import Model.FournisseurDAO;
+import Controller.ArticleController;
 
 public class Main {
     public static void main(String[] args) {

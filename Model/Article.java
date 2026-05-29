@@ -8,6 +8,16 @@ public class Article {
     private int quantite_stock;
     private int id_fournisseur;
 
+    // Constructeur avec id_article et id_fournisseur
+    public Article(int id_article, String nom, String type, double prix_unitaire, int quantite_stock, int id_fournisseur){
+        this.id_article = id_article;
+        this.nom = nom;
+        this.type = type;
+        this.prix_unitaire = prix_unitaire;
+        this.quantite_stock = quantite_stock;
+        this.id_fournisseur = id_fournisseur;
+    }
+
     // Constructeur avec id_fournisseur
     public Article(String nom, String type, double prix_unitaire, int quantite_stock, int id_fournisseur){
         this.nom = nom;

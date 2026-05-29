@@ -1,4 +1,4 @@
-package Model;
+package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import static Model.connectionDB.getConnection;
+
+import Model.Fournisseur;
 
 public class FournisseurDAO {
     
@@ -47,7 +48,7 @@ public class FournisseurDAO {
         String sql = "INSERT INTO fournisseur (nom, telephone, email, adresse) VALUES (?, ?, ?, ?)";
         
         try (
-            Connection conn = getConnection();
+            Connection conn = connectionDB.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)
         ) {
             pstmt.setString(1, nom);
@@ -66,7 +67,7 @@ public class FournisseurDAO {
     public void supprimerFournisseur(int idFournisseur) {
         String sql = "DELETE FROM fournisseur WHERE id_fournisseur = ?";
         try (
-            Connection conn = getConnection();
+            Connection conn = connectionDB.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)
         ) {
             pstmt.setInt(1, idFournisseur);
@@ -86,7 +87,7 @@ public class FournisseurDAO {
     public void modifierFournisseur(Fournisseur fournisseur) {
         String sql = "UPDATE fournisseur SET nom = ?, telephone = ?, email = ?, adresse = ? WHERE id_fournisseur = ?";
         try (
-            Connection conn = getConnection();
+            Connection conn = connectionDB.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)
         ) {
             pstmt.setString(1, fournisseur.getNom());
