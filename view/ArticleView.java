@@ -252,6 +252,7 @@ public class ArticleView extends JFrame {
         table.getColumnModel().getColumn(0).setResizable(false);
     }
 
+    // Méthodes pour ajouter les listeners qui prends dans le controller
     public void addAjouterListener(ActionListener listener) {
         ajouterButton.addActionListener(listener);
     }

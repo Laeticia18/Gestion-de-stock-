@@ -20,19 +20,20 @@ public class ArticleController {
         
         afficherArticles();
         
-        // Listener pour ajouter un article
+        // Listener pour ajouter un article qui a une méthode dédiée dans le controller et qui est appelée lors du clic sur le bouton "Ajouter"
         view.addAjouterListener(e -> AjouterArticle());
         
-        // Listener pour supprimer un article
+        // Listener pour supprimer un article qui a une méthode dédiée dans le controller et qui est appelée lors du clic sur le bouton "Supprimer"
         view.addSupprimerListener(e -> supprimerArticleSelectionne());
         
-        // Listener pour modifier un article
+        // Listener pour modifier un article qui a une méthode dédiée dans le controller et qui est appelée lors du clic sur le bouton "Modifier"
         view.addModifierListener(e -> modifierArticleSelectionne());
         
-        // Listener pour naviguer vers FournisseurView
+        // Listener pour naviguer vers FournisseurView qui a une méthode dédiée dans le controller et qui est appelée lors du clic sur le bouton "Fournisseurs"
         view.addFournisseurButtonListener(e -> ouvrirFournisseurView());
     }
-
+    
+    // Méthode pour permettre au controller fournisseur d'appeler des méthodes du controller article
     public void setFournisseurController(FournisseurController fournisseurController) {
         this.fournisseurController = fournisseurController;
     }
